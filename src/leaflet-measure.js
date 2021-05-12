@@ -293,7 +293,7 @@ L.Control.Measure = L.Control.extend({
   },
   // update results area of dom with calced measure from `this._latlngs`
   _updateResults: function() {
-    const calced = calc(this._latlngs);
+    const calced = calc(this._latlngs, this._map);
     const model = (this._resultsModel = L.extend(
       {},
       calced,
@@ -332,7 +332,7 @@ L.Control.Measure = L.Control.extend({
       latlngs.push(latlngs[0]); // close path to get full perimeter measurement for areas
     }
 
-    const calced = calc(latlngs);
+    const calced = calc(latlngs, this._map);
 
     if (latlngs.length === 1) {
       resultFeature = L.circleMarker(latlngs[0], this._symbols.getSymbol('resultPoint'));
