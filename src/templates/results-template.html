@@ -1,8 +1,12 @@
+<% if (!model.isSimpleMap) { %>
 <div class="group">
-  <p class="lastpoint heading">{{ i18n.lastPoint }}</p>
-  <p>{{ model.lastCoord.dms.y }} <span class="coorddivider">/</span> {{ model.lastCoord.dms.x }}</p>
-  <p>{{ numberFormat(model.lastCoord.dd.y, 6) }} <span class="coorddivider">/</span> {{ numberFormat(model.lastCoord.dd.x, 6) }}</p>
+  <p class="lastpoint">
+    <span class="heading">{{ i18n.lastPoint }} </span>
+    {{ model.lastCoord.dms.y }} <span class="coorddivider">/</span> {{ model.lastCoord.dms.x }}
+  </p>
+
 </div>
+<% } %>
 <% if (model.pointCount > 1) { %>
 <div class="group">
   <p><span class="heading">{{ i18n.pathDistance }}</span> {{ model.lengthDisplay }}</p>

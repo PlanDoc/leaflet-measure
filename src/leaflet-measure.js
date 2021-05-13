@@ -124,8 +124,8 @@ L.Control.Measure = L.Control.extend({
     this._updateMeasureNotStarted();
 
     if (!L.Browser.android) {
-      L.DomEvent.on(container, 'mouseenter', this._expand, this);
-      L.DomEvent.on(container, 'mouseleave', this._collapse, this);
+      L.DomEvent.on(container, 'click', this._expand, this);
+      // L.DomEvent.on(container, 'mouseleave', this._collapse, this);
     }
     L.DomEvent.on($toggle, 'click', L.DomEvent.stop);
     if (L.Browser.touch) {
@@ -143,6 +143,7 @@ L.Control.Measure = L.Control.extend({
   _expand: function() {
     dom.hide(this.$toggle);
     dom.show(this.$interaction);
+    this._startMeasure();
   },
   _collapse: function() {
     if (!this._locked) {
@@ -332,7 +333,8 @@ L.Control.Measure = L.Control.extend({
       calced,
       this._getMeasurementDisplayStrings(calced),
       {
-        pointCount: this._latlngs.length
+        pointCount: this._latlngs.length,
+        isSimpleMap: this._map && this._map.options && this._map.options.crs === L.CRS.Simple
       }
     ));
     this.$results.innerHTML = resultsTemplateCompiled({ model, i18n: this.options.i18n });

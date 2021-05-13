@@ -5,7 +5,7 @@ $color-button: #5e66cc;
 $color-lightertext: #999;
 
 $spacing-external: 12px;
-$spacing-internal: 10px;
+$spacing-internal: 4px;
 
 $max-width: 280px;
 
@@ -21,7 +21,7 @@ $button-icon-spacing: 4px;
   }
 }
 
-@mixin button ($icon) {
+@mixin button($icon) {
   display: inline;
   width: auto;
   height: auto;
@@ -64,8 +64,8 @@ $button-icon-spacing: 4px;
   }
   .tasks {
     margin: $spacing-external 0 0 0;
-    padding: $spacing-internal 0 0 0;
-    border-top: solid 1px $color-divider;
+    //padding: $spacing-internal 0 0 0;
+    //border-top: solid 1px $color-divider;
     text-align: right;
 
     list-style: none;
@@ -129,14 +129,14 @@ $button-icon-spacing: 4px;
   }
 
   .leaflet-control-measure-interaction {
-    padding: $spacing-internal $spacing-external;
+    padding: $spacing-external $spacing-external;
   }
 
   .results {
     .group {
       margin-top: $spacing-internal;
       padding-top: $spacing-internal;
-      border-top: dotted 1px lighten($color-divider, 5);
+      //border-top: dotted 1px lighten($color-divider, 5);
       &:first-child {
         margin-top: 0;
         padding-top: 0;

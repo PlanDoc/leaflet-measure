@@ -437,44 +437,44 @@
             (u = p ? c.geometries.length : 1);
           for (var b = 0; b < u; b++) {
             var _ = 0,
-              j = 0;
+              M = 0;
             if (null !== (a = p ? c.geometries[b] : c)) {
               l = a.coordinates;
-              var M = a.type;
-              switch (((f = !r || ('Polygon' !== M && 'MultiPolygon' !== M) ? 0 : 1), M)) {
+              var j = a.type;
+              switch (((f = !r || ('Polygon' !== j && 'MultiPolygon' !== j) ? 0 : 1), j)) {
                 case null:
                   break;
                 case 'Point':
-                  if (!1 === t(l, h, g, _, j)) return !1;
+                  if (!1 === t(l, h, g, _, M)) return !1;
                   h++, _++;
                   break;
                 case 'LineString':
                 case 'MultiPoint':
                   for (o = 0; o < l.length; o++) {
-                    if (!1 === t(l[o], h, g, _, j)) return !1;
-                    h++, 'MultiPoint' === M && _++;
+                    if (!1 === t(l[o], h, g, _, M)) return !1;
+                    h++, 'MultiPoint' === j && _++;
                   }
-                  'LineString' === M && _++;
+                  'LineString' === j && _++;
                   break;
                 case 'Polygon':
                 case 'MultiLineString':
                   for (o = 0; o < l.length; o++) {
                     for (i = 0; i < l[o].length - f; i++) {
-                      if (!1 === t(l[o][i], h, g, _, j)) return !1;
+                      if (!1 === t(l[o][i], h, g, _, M)) return !1;
                       h++;
                     }
-                    'MultiLineString' === M && _++, 'Polygon' === M && j++;
+                    'MultiLineString' === j && _++, 'Polygon' === j && M++;
                   }
-                  'Polygon' === M && _++;
+                  'Polygon' === j && _++;
                   break;
                 case 'MultiPolygon':
                   for (o = 0; o < l.length; o++) {
-                    for ('MultiPolygon' === M && (j = 0), i = 0; i < l[o].length; i++) {
+                    for ('MultiPolygon' === j && (M = 0), i = 0; i < l[o].length; i++) {
                       for (s = 0; s < l[o][i].length - f; s++) {
-                        if (!1 === t(l[o][i][s], h, g, _, j)) return !1;
+                        if (!1 === t(l[o][i][s], h, g, _, M)) return !1;
                         h++;
                       }
-                      j++;
+                      M++;
                     }
                     _++;
                   }
@@ -645,7 +645,7 @@
       g = (0, i.default)(m.resultsTemplate, y),
       b = (0, i.default)(m.pointPopupTemplate, y),
       _ = (0, i.default)(m.linePopupTemplate, y),
-      j = (0, i.default)(m.areaPopupTemplate, y);
+      M = (0, i.default)(m.areaPopupTemplate, y);
     (L.Control.Measure = L.Control.extend({
       _className: 'leaflet-control-measure',
       options: {
@@ -730,9 +730,7 @@
           (this.$measureTasks = (0, c.selectOne)('.js-measuretasks', t)),
           this._collapse(),
           this._updateMeasureNotStarted(),
-          L.Browser.android ||
-            (L.DomEvent.on(t, 'mouseenter', this._expand, this),
-            L.DomEvent.on(t, 'mouseleave', this._collapse, this)),
+          L.Browser.android || L.DomEvent.on(t, 'click', this._expand, this),
           L.DomEvent.on(r, 'click', L.DomEvent.stop),
           L.Browser.touch
             ? L.DomEvent.on(r, 'click', this._expand, this)
@@ -745,7 +743,7 @@
           L.DomEvent.on(i, 'click', this._handleMeasureDoubleClick, this);
       },
       _expand: function() {
-        p.hide(this.$toggle), p.show(this.$interaction);
+        p.hide(this.$toggle), p.show(this.$interaction), this._startMeasure();
       },
       _collapse: function() {
         this._locked || (p.hide(this.$interaction), p.show(this.$toggle));
@@ -881,7 +879,8 @@
       _updateResults: function() {
         var e = (0, l.default)(this._latlngs, this._map, this.options.ppm),
           t = (this._resultsModel = L.extend({}, e, this._getMeasurementDisplayStrings(e), {
-            pointCount: this._latlngs.length
+            pointCount: this._latlngs.length,
+            isSimpleMap: this._map && this._map.options && this._map.options.crs === L.CRS.Simple
           }));
         this.$results.innerHTML = g({ model: t, i18n: this.options.i18n });
       },
@@ -911,7 +910,7 @@
                 i18n: this.options.i18n
               })))
             : ((t = L.polygon(e, this._symbols.getSymbol('resultArea'))),
-              (r = j({
+              (r = M({
                 model: L.extend({}, n, this._getMeasurementDisplayStrings(n)),
                 i18n: this.options.i18n
               })));
@@ -1019,40 +1018,40 @@
         P = p(O),
         k = s(O, P),
         C = 0,
-        E = t.interpolate || j,
-        A = "__p += '",
-        S = RegExp(
-          (t.escape || j).source +
+        E = t.interpolate || M,
+        S = "__p += '",
+        A = RegExp(
+          (t.escape || M).source +
             '|' +
             E.source +
             '|' +
-            (E === f ? _ : j).source +
+            (E === f ? _ : M).source +
             '|' +
-            (t.evaluate || j).source +
+            (t.evaluate || M).source +
             '|$',
           'g'
         ),
         D = w.call(t, 'sourceURL')
           ? '//# sourceURL=' + (t.sourceURL + '').replace(/\s/g, ' ') + '\n'
           : '';
-      e.replace(S, function(t, r, n, o, i, s) {
+      e.replace(A, function(t, r, n, o, i, s) {
         return (
           n || (n = o),
-          (A += e.slice(C, s).replace(M, u)),
-          r && ((x = !0), (A += "' +\n__e(" + r + ") +\n'")),
-          i && ((L = !0), (A += "';\n" + i + ";\n__p += '")),
-          n && (A += "' +\n((__t = (" + n + ")) == null ? '' : __t) +\n'"),
+          (S += e.slice(C, s).replace(j, u)),
+          r && ((x = !0), (S += "' +\n__e(" + r + ") +\n'")),
+          i && ((L = !0), (S += "';\n" + i + ";\n__p += '")),
+          n && (S += "' +\n((__t = (" + n + ")) == null ? '' : __t) +\n'"),
           (C = s + t.length),
           t
         );
       }),
-        (A += "';\n");
+        (S += "';\n");
       var T = w.call(t, 'variable') && t.variable;
       if (T) {
         if (b.test(T)) throw new Error(m);
-      } else A = 'with (obj) {\n' + A + '\n}\n';
-      (A = (L ? A.replace(y, '') : A).replace(v, '$1').replace(g, '$1;')),
-        (A =
+      } else S = 'with (obj) {\n' + S + '\n}\n';
+      (S = (L ? S.replace(y, '') : S).replace(v, '$1').replace(g, '$1;')),
+        (S =
           'function(' +
           (T || 'obj') +
           ') {\n' +
@@ -1062,12 +1061,12 @@
           (L
             ? ", __j = Array.prototype.join;\nfunction print() { __p += __j.call(arguments, '') }\n"
             : ';\n') +
-          A +
+          S +
           'return __p\n}');
       var q = i(function() {
-        return Function(P, D + 'return ' + A).apply(void 0, k);
+        return Function(P, D + 'return ' + S).apply(void 0, k);
       });
-      if (((q.source = A), l(q))) throw q;
+      if (((q.source = S), l(q))) throw q;
       return q;
     }
     var o = r(32),
@@ -1087,8 +1086,8 @@
       g = /(__e\(.*?\)|\b__t\)) \+\n'';/g,
       b = /[()=,{}\[\]\/\s]/,
       _ = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g,
-      j = /($^)/,
-      M = /['\n\r\u2028\u2029\\]/g,
+      M = /($^)/,
+      j = /['\n\r\u2028\u2029\\]/g,
       x = Object.prototype,
       w = x.hasOwnProperty;
     e.exports = n;
@@ -2026,22 +2025,22 @@
   },
   function(e, t) {
     e.exports =
-      '<a class="{{ model.className }}-toggle js-toggle" href=# title="{{ i18n.measureDistancesAndAreas }}">{{ i18n.measure }}</a> <div class="{{ model.className }}-interaction js-interaction"> <div class="js-startprompt startprompt"> <h3>{{ i18n.measureDistancesAndAreas }}</h3> <ul class=tasks> <a href=# class="js-start start">{{ i18n.createNewMeasurement }}</a> </ul> </div> <div class=js-measuringprompt> <h3>{{ i18n.measureDistancesAndAreas }}</h3> <p class=js-starthelp>{{ i18n.startCreating }}</p> <div class="js-results results"></div> <ul class="js-measuretasks tasks"> <li><a href=# class="js-cancel cancel">{{ i18n.cancel }}</a></li> <li><a href=# class="js-finish finish">{{ i18n.finishMeasurement }}</a></li> </ul> </div> </div> ';
+      '<a class="{{ model.className }}-toggle js-toggle" href=# title="{{ i18n.measureDistancesAndAreas }}">{{ i18n.measure }}</a> <div class="{{ model.className }}-interaction js-interaction"> <div class="js-startprompt startprompt"> <ul class=tasks> <a href=# class="js-start start">{{ i18n.createNewMeasurement }}</a> </ul> </div> <div class=js-measuringprompt> <p class=js-starthelp>{{ i18n.startCreating }}</p> <div class="js-results results"></div> <ul class="js-measuretasks tasks"> <li><a href=# class="js-cancel cancel">{{ i18n.cancel }}</a></li> <li><a href=# class="js-finish finish">{{ i18n.finishMeasurement }}</a></li> </ul> </div> </div> ';
   },
   function(e, t) {
     e.exports =
-      '<div class=group> <p class="lastpoint heading">{{ i18n.lastPoint }}</p> <p>{{ model.lastCoord.dms.y }} <span class=coorddivider>/</span> {{ model.lastCoord.dms.x }}</p> <p>{{ numberFormat(model.lastCoord.dd.y, 6) }} <span class=coorddivider>/</span> {{ numberFormat(model.lastCoord.dd.x, 6) }}</p> </div> <% if (model.pointCount > 1) { %> <div class=group> <p><span class=heading>{{ i18n.pathDistance }}</span> {{ model.lengthDisplay }}</p> </div> <% } %> <% if (model.pointCount > 2) { %> <div class=group> <p><span class=heading>{{ i18n.area }}</span> {{ model.areaDisplay }}</p> </div> <% } %> ';
+      '<% if (!model.isSimpleMap) { %> <div class=group> <p class=lastpoint> <span class=heading>{{ i18n.lastPoint }} </span> {{ model.lastCoord.dms.y }} <span class=coorddivider>/</span> {{ model.lastCoord.dms.x }} </p> </div> <% } %> <% if (model.pointCount > 1) { %> <div class=group> <p><span class=heading>{{ i18n.pathDistance }}</span> {{ model.lengthDisplay }}</p> </div> <% } %> <% if (model.pointCount > 2) { %> <div class=group> <p><span class=heading>{{ i18n.area }}</span> {{ model.areaDisplay }}</p> </div> <% } %> ';
   },
   function(e, t) {
     e.exports =
-      '<h3>{{ i18n.pointLocation }}</h3> <p>{{ model.lastCoord.dms.y }} <span class=coorddivider>/</span> {{ model.lastCoord.dms.x }}</p> <p>{{ numberFormat(model.lastCoord.dd.y, 6) }} <span class=coorddivider>/</span> {{ numberFormat(model.lastCoord.dd.x, 6) }}</p> <ul class=tasks> <li><a href=# class="js-zoomto zoomto">{{ i18n.centerOnLocation }}</a></li> <li><a href=# class="js-deletemarkup deletemarkup">{{ i18n.delete }}</a></li> </ul> ';
+      '<p>{{ i18n.pointLocation }}</p> <p>{{ model.lastCoord.dms.y }} <span class=coorddivider>/</span> {{ model.lastCoord.dms.x }}</p> <p>{{ numberFormat(model.lastCoord.dd.y, 6) }} <span class=coorddivider>/</span> {{ numberFormat(model.lastCoord.dd.x, 6) }}</p> <ul class=tasks> <li><a href=# class="js-zoomto zoomto">{{ i18n.centerOnLocation }}</a></li> <li><a href=# class="js-deletemarkup deletemarkup">{{ i18n.delete }}</a></li> </ul> ';
   },
   function(e, t) {
     e.exports =
-      '<h3>{{ i18n.linearMeasurement }}</h3> <p>{{ model.lengthDisplay }}</p> <ul class=tasks> <li><a href=# class="js-zoomto zoomto">{{ i18n.centerOnLine }}</a></li> <li><a href=# class="js-deletemarkup deletemarkup">{{ i18n.delete }}</a></li> </ul> ';
+      '<p>{{ i18n.linearMeasurement }}</p> <p>{{ model.lengthDisplay }}</p> <ul class=tasks> <li><a href=# class="js-zoomto zoomto">{{ i18n.centerOnLine }}</a></li> <li><a href=# class="js-deletemarkup deletemarkup">{{ i18n.delete }}</a></li> </ul> ';
   },
   function(e, t) {
     e.exports =
-      '<h3>{{ i18n.areaMeasurement }}</h3> <p>{{ model.areaDisplay }}</p> <p>{{ model.lengthDisplay }} {{ i18n.perimeter }}</p> <ul class=tasks> <li><a href=# class="js-zoomto zoomto">{{ i18n.centerOnArea }}</a></li> <li><a href=# class="js-deletemarkup deletemarkup">{{ i18n.delete }}</a></li> </ul> ';
+      '<p>{{ i18n.areaMeasurement }}</p> <p>{{ model.areaDisplay }}</p> <p>{{ model.lengthDisplay }} {{ i18n.perimeter }}</p> <ul class=tasks> <li><a href=# class="js-zoomto zoomto">{{ i18n.centerOnArea }}</a></li> <li><a href=# class="js-deletemarkup deletemarkup">{{ i18n.delete }}</a></li> </ul> ';
   }
 ]);
