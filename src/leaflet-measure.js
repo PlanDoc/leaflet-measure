@@ -37,7 +37,38 @@ L.Control.Measure = L.Control.extend({
     primaryAreaUnit: 'acres',
     activeColor: '#ABE67E', // base color for map features while actively measuring
     completedColor: '#C8F2BE', // base color for permenant features generated from completed measure
-    captureZIndex: 10000, // z-index of the marker used to capture measure events
+    captureZIndex: 10000, // z-index of the marker used to capture measure events,
+    ppm: 1,
+    i18n: {
+      measure: 'Measure',
+      measureDistancesAndAreas: 'Measure distances and areas',
+      createNewMeasurement: 'Create a new measurement',
+      startCreating: 'Start creating a measurement by adding points to the map',
+      finishMeasurement: 'Finish measurement',
+      lastPoint: 'Last point',
+      area: 'Area',
+      perimeter: 'Perimeter',
+      pointLocation: 'Point location',
+      areaMeasurement: 'Area measurement',
+      linearMeasurement: 'Linear measurement',
+      pathDistance: 'Path distance',
+      centerOnArea: 'Center on this area',
+      centerOnLine: 'Center on this line',
+      centerOnLocation: 'Center on this location',
+      cancel: 'Cancel',
+      delete: 'Delete',
+      acres: 'Acres',
+      feet: 'Feet',
+      kilometers: 'Kilometers',
+      hectares: 'Hectares',
+      meters: 'Meters',
+      miles: 'Miles',
+      sqfeet: 'Sq Feet',
+      sqmeters: 'Sq Meters',
+      sqmiles: 'Sq Miles',
+      decPoint: '.',
+      thousandsSep: ','
+    },
     popupOptions: {
       // standard leaflet popup options http://leafletjs.com/reference-1.3.0.html#popup-option
       className: 'leaflet-measure-resultpopup',
@@ -69,7 +100,8 @@ L.Control.Measure = L.Control.extend({
     container.innerHTML = controlTemplateCompiled({
       model: {
         className: className
-      }
+      },
+      i18n: this.options.i18n
     });
 
     // makes this work on IE touch devices by stopping it from firing a mouseout event when the touch is released
@@ -232,6 +264,7 @@ L.Control.Measure = L.Control.extend({
   // `{ lengthDisplay: '100 Feet (0.02 Miles)', areaDisplay: ... }`
   _getMeasurementDisplayStrings: function(measurement) {
     const unitDefinitions = this.options.units;
+    const i18n = this.options.i18n;
 
     return {
       lengthDisplay: buildDisplay(
@@ -269,23 +302,23 @@ L.Control.Measure = L.Control.extend({
 
     function formatMeasure(val, unit, decPoint, thousandsSep) {
       const unitDisplays = {
-        acres: __('acres'),
-        feet: __('feet'),
-        kilometers: __('kilometers'),
-        hectares: __('hectares'),
-        meters: __('meters'),
-        miles: __('miles'),
-        sqfeet: __('sqfeet'),
-        sqmeters: __('sqmeters'),
-        sqmiles: __('sqmiles')
+        acres: i18n.acres,
+        feet: i18n.feet,
+        kilometers: i18n.kilometers,
+        hectares: i18n.hectares,
+        meters: i18n.meters,
+        miles: i18n.miles,
+        sqfeet: i18n.sqfeet,
+        sqmeters: i18n.sqmeters,
+        sqmiles: i18n.sqmiles
       };
 
       const u = L.extend({ factor: 1, decimals: 0 }, unit);
       const formattedNumber = numberFormat(
         val * u.factor,
         u.decimals,
-        decPoint || __('decPoint'),
-        thousandsSep || __('thousandsSep')
+        decPoint || i18n.decPoint,
+        thousandsSep || i18n.thousandsSep
       );
       const label = unitDisplays[u.display] || u.display;
       return [formattedNumber, label].join(' ');
@@ -293,7 +326,7 @@ L.Control.Measure = L.Control.extend({
   },
   // update results area of dom with calced measure from `this._latlngs`
   _updateResults: function() {
-    const calced = calc(this._latlngs, this._map);
+    const calced = calc(this._latlngs, this._map, this.options.ppm);
     const model = (this._resultsModel = L.extend(
       {},
       calced,
@@ -302,7 +335,7 @@ L.Control.Measure = L.Control.extend({
         pointCount: this._latlngs.length
       }
     ));
-    this.$results.innerHTML = resultsTemplateCompiled({ model });
+    this.$results.innerHTML = resultsTemplateCompiled({ model, i18n: this.options.i18n });
   },
   // mouse move handler while measure in progress
   // adds floating measure marker under cursor
@@ -332,22 +365,25 @@ L.Control.Measure = L.Control.extend({
       latlngs.push(latlngs[0]); // close path to get full perimeter measurement for areas
     }
 
-    const calced = calc(latlngs, this._map);
+    const calced = calc(latlngs, this._map, this.options.ppm);
 
     if (latlngs.length === 1) {
       resultFeature = L.circleMarker(latlngs[0], this._symbols.getSymbol('resultPoint'));
       popupContent = pointPopupTemplateCompiled({
-        model: calced
+        model: calced,
+        i18n: this.options.i18n
       });
     } else if (latlngs.length === 2) {
       resultFeature = L.polyline(latlngs, this._symbols.getSymbol('resultLine'));
       popupContent = linePopupTemplateCompiled({
-        model: L.extend({}, calced, this._getMeasurementDisplayStrings(calced))
+        model: L.extend({}, calced, this._getMeasurementDisplayStrings(calced)),
+        i18n: this.options.i18n
       });
     } else {
       resultFeature = L.polygon(latlngs, this._symbols.getSymbol('resultArea'));
       popupContent = areaPopupTemplateCompiled({
-        model: L.extend({}, calced, this._getMeasurementDisplayStrings(calced))
+        model: L.extend({}, calced, this._getMeasurementDisplayStrings(calced)),
+        i18n: this.options.i18n
       });
     }
 

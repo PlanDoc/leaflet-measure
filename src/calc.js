@@ -18,14 +18,14 @@ function ddToDms(coordinate, posSymbol, negSymbol) {
 }
 
 /* calc measurements for an array of points */
-export default function calc(latlngs, map) {
+export default function calc(latlngs, map, ppm) {
   const last = latlngs[latlngs.length - 1];
   const path = latlngs.map(latlng => [latlng.lat, latlng.lng]);
 
   const polyline = L.polyline(path),
     polygon = L.polygon(path);
-  const meters = getMeters(latlngs, map, polyline);
-  const sqMeters = getArea(latlngs, map, polygon);
+  const meters = getMeters(latlngs, map, ppm, polyline);
+  const sqMeters = getArea(latlngs, map, ppm, polygon);
 
   return {
     lastCoord: {
@@ -43,28 +43,28 @@ export default function calc(latlngs, map) {
   };
 }
 
-function getMeters(latlngs, map, polyline) {
+function getMeters(latlngs, map, ppm, polyline) {
   let meters;
-  if (map && map.options && map.options.crs === L.CRS.Simple) {
-    if (!map.options.ppm) map.options.ppm = 1;
+  if (isSimpleMap(map)) {
+    if (!ppm) ppm = 1;
     meters = 0;
     if (latlngs) {
       for (let i = 0; i < latlngs.length - 1; i++) {
         meters += map.options.crs.distance(latlngs[i], latlngs[i + 1]);
       }
     }
-    meters = meters / map.options.ppm;
+    meters = meters / ppm;
   } else {
     meters = length(polyline.toGeoJSON(), { units: 'kilometers' }) * 1000;
   }
   return meters;
 }
 
-function getArea(latlngs, map, polygon) {
+function getArea(latlngs, map, ppm, polygon) {
   let res;
-  if (map && map.options && map.options.crs === L.CRS.Simple) {
-    if (!map.options.ppm) map.options.ppm = 1;
-    res = calcPolygonArea(latlngs) / (map.options.ppm * map.options.ppm);
+  if (isSimpleMap(map)) {
+    if (!ppm) ppm = 1;
+    res = calcPolygonArea(latlngs) / (ppm * ppm);
   } else {
     res = area(polygon.toGeoJSON());
   }
@@ -85,4 +85,8 @@ function calcPolygonArea(vertices) {
   }
 
   return Math.abs(total);
+}
+
+function isSimpleMap(map) {
+  return map && map.options && map.options.crs === L.CRS.Simple;
 }
