@@ -1,5 +1,13 @@
-<p>{{ i18n.linearMeasurement }}</p>
-<p>{{ model.lengthDisplay }}</p>
+<div class="leaflet-control-measure">
+  <div class="results">
+    <div class="group">
+      <span class="heading">{{ i18n.pathDistance }}</span>
+      <span>{{ model.lengthDisplay }}</span>
+    </div>
+  </div>
+</div>
+
+
 <ul class="tasks">
   <li><a href="#" class="js-zoomto zoomto">{{ i18n.centerOnLine }}</a></li>
   <li><a href="#" class="js-deletemarkup deletemarkup">{{ i18n.delete }}</a></li>

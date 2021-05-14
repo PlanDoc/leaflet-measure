@@ -7,13 +7,22 @@
 
 </div>
 <% } %>
+
+<% if (model.isSimpleMap && model.pointCount == 1) { %>
+<div class="js-measuringprompt">
+  <p class="js-starthelp">{{ i18n.startCreating }}</p>
+</div>
+<% } %>
+
 <% if (model.pointCount > 1) { %>
 <div class="group">
-  <p><span class="heading">{{ i18n.pathDistance }}</span> {{ model.lengthDisplay }}</p>
+  <span class="heading">{{ i18n.pathDistance }}</span>
+  <span>{{ model.lengthDisplay }}</span>
 </div>
 <% } %>
 <% if (model.pointCount > 2) { %>
 <div class="group">
-  <p><span class="heading">{{ i18n.area }}</span> {{ model.areaDisplay }}</p>
+  <span class="heading">{{ i18n.area }}</span>
+  <span>{{ model.areaDisplay }}</span>
 </div>
 <% } %>

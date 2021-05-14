@@ -134,6 +134,8 @@ $button-icon-spacing: 4px;
 
   .results {
     .group {
+      display: grid;
+      grid-template-columns: auto auto;
       margin-top: $spacing-internal;
       padding-top: $spacing-internal;
       //border-top: dotted 1px lighten($color-divider, 5);

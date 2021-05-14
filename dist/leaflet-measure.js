@@ -107,7 +107,7 @@
     function c(e, t) {
       if (void 0 === e || null === e) throw new Error('radians is required');
       if (t && 'string' != typeof t) throw new Error('units must be a string');
-      var r = y[t || 'kilometers'];
+      var r = v[t || 'kilometers'];
       if (!r) throw new Error(t + ' units is invalid');
       return e * r;
     }
@@ -156,7 +156,7 @@
       r.d(t, 'd', function() {
         return h;
       });
-    var y = {
+    var v = {
       meters: 6371008.8,
       metres: 6371008.8,
       millimeters: 6371008800,
@@ -312,14 +312,14 @@
         h = r || n || c || f,
         d = h ? o(e.length, String) : [],
         m = d.length;
-      for (var y in e)
-        (!t && !p.call(e, y)) ||
+      for (var v in e)
+        (!t && !p.call(e, v)) ||
           (h &&
-            ('length' == y ||
-              (c && ('offset' == y || 'parent' == y)) ||
-              (f && ('buffer' == y || 'byteLength' == y || 'byteOffset' == y)) ||
-              u(y, m))) ||
-          d.push(y);
+            ('length' == v ||
+              (c && ('offset' == v || 'parent' == v)) ||
+              (f && ('buffer' == v || 'byteLength' == v || 'byteOffset' == v)) ||
+              u(v, m))) ||
+          d.push(v);
       return d;
     }
     var o = r(51),
@@ -426,55 +426,55 @@
             h = 0,
             d = e.type,
             m = 'FeatureCollection' === d,
-            y = 'Feature' === d,
-            v = m ? e.features.length : 1,
+            v = 'Feature' === d,
+            y = m ? e.features.length : 1,
             g = 0;
-          g < v;
+          g < y;
           g++
         ) {
-          (c = m ? e.features[g].geometry : y ? e.geometry : e),
+          (c = m ? e.features[g].geometry : v ? e.geometry : e),
             (p = !!c && 'GeometryCollection' === c.type),
             (u = p ? c.geometries.length : 1);
           for (var b = 0; b < u; b++) {
             var _ = 0,
-              M = 0;
+              j = 0;
             if (null !== (a = p ? c.geometries[b] : c)) {
               l = a.coordinates;
-              var j = a.type;
-              switch (((f = !r || ('Polygon' !== j && 'MultiPolygon' !== j) ? 0 : 1), j)) {
+              var M = a.type;
+              switch (((f = !r || ('Polygon' !== M && 'MultiPolygon' !== M) ? 0 : 1), M)) {
                 case null:
                   break;
                 case 'Point':
-                  if (!1 === t(l, h, g, _, M)) return !1;
+                  if (!1 === t(l, h, g, _, j)) return !1;
                   h++, _++;
                   break;
                 case 'LineString':
                 case 'MultiPoint':
                   for (o = 0; o < l.length; o++) {
-                    if (!1 === t(l[o], h, g, _, M)) return !1;
-                    h++, 'MultiPoint' === j && _++;
+                    if (!1 === t(l[o], h, g, _, j)) return !1;
+                    h++, 'MultiPoint' === M && _++;
                   }
-                  'LineString' === j && _++;
+                  'LineString' === M && _++;
                   break;
                 case 'Polygon':
                 case 'MultiLineString':
                   for (o = 0; o < l.length; o++) {
                     for (i = 0; i < l[o].length - f; i++) {
-                      if (!1 === t(l[o][i], h, g, _, M)) return !1;
+                      if (!1 === t(l[o][i], h, g, _, j)) return !1;
                       h++;
                     }
-                    'MultiLineString' === j && _++, 'Polygon' === j && M++;
+                    'MultiLineString' === M && _++, 'Polygon' === M && j++;
                   }
-                  'Polygon' === j && _++;
+                  'Polygon' === M && _++;
                   break;
                 case 'MultiPolygon':
                   for (o = 0; o < l.length; o++) {
-                    for ('MultiPolygon' === j && (M = 0), i = 0; i < l[o].length; i++) {
+                    for ('MultiPolygon' === M && (j = 0), i = 0; i < l[o].length; i++) {
                       for (s = 0; s < l[o][i].length - f; s++) {
-                        if (!1 === t(l[o][i][s], h, g, _, M)) return !1;
+                        if (!1 === t(l[o][i][s], h, g, _, j)) return !1;
                         h++;
                       }
-                      M++;
+                      j++;
                     }
                     _++;
                   }
@@ -640,12 +640,12 @@
       h = n(f),
       d = r(87),
       m = r(88),
-      y = { imports: { numberFormat: d.numberFormat }, interpolate: /{{([\s\S]+?)}}/g },
-      v = (0, i.default)(m.controlTemplate, y),
-      g = (0, i.default)(m.resultsTemplate, y),
-      b = (0, i.default)(m.pointPopupTemplate, y),
-      _ = (0, i.default)(m.linePopupTemplate, y),
-      M = (0, i.default)(m.areaPopupTemplate, y);
+      v = { imports: { numberFormat: d.numberFormat }, interpolate: /{{([\s\S]+?)}}/g },
+      y = (0, i.default)(m.controlTemplate, v),
+      g = (0, i.default)(m.resultsTemplate, v),
+      b = (0, i.default)(m.pointPopupTemplate, v),
+      _ = (0, i.default)(m.linePopupTemplate, v),
+      j = (0, i.default)(m.areaPopupTemplate, v);
     (L.Control.Measure = L.Control.extend({
       _className: 'leaflet-control-measure',
       options: {
@@ -714,7 +714,7 @@
       _initLayout: function() {
         var e = this._className,
           t = (this._container = L.DomUtil.create('div', e + ' leaflet-bar'));
-        (t.innerHTML = v({ model: { className: e }, i18n: this.options.i18n })),
+        (t.innerHTML = y({ model: { className: e }, i18n: this.options.i18n })),
           t.setAttribute('aria-haspopup', !0),
           L.DomEvent.disableClickPropagation(t),
           L.DomEvent.disableScrollPropagation(t);
@@ -910,7 +910,7 @@
                 i18n: this.options.i18n
               })))
             : ((t = L.polygon(e, this._symbols.getSymbol('resultArea'))),
-              (r = M({
+              (r = j({
                 model: L.extend({}, n, this._getMeasurementDisplayStrings(n)),
                 i18n: this.options.i18n
               })));
@@ -1018,16 +1018,16 @@
         P = p(O),
         k = s(O, P),
         C = 0,
-        E = t.interpolate || M,
+        E = t.interpolate || j,
         S = "__p += '",
         A = RegExp(
-          (t.escape || M).source +
+          (t.escape || j).source +
             '|' +
             E.source +
             '|' +
-            (E === f ? _ : M).source +
+            (E === f ? _ : j).source +
             '|' +
-            (t.evaluate || M).source +
+            (t.evaluate || j).source +
             '|$',
           'g'
         ),
@@ -1037,7 +1037,7 @@
       e.replace(A, function(t, r, n, o, i, s) {
         return (
           n || (n = o),
-          (S += e.slice(C, s).replace(j, u)),
+          (S += e.slice(C, s).replace(M, u)),
           r && ((x = !0), (S += "' +\n__e(" + r + ") +\n'")),
           i && ((L = !0), (S += "';\n" + i + ";\n__p += '")),
           n && (S += "' +\n((__t = (" + n + ")) == null ? '' : __t) +\n'"),
@@ -1050,7 +1050,7 @@
       if (T) {
         if (b.test(T)) throw new Error(m);
       } else S = 'with (obj) {\n' + S + '\n}\n';
-      (S = (L ? S.replace(y, '') : S).replace(v, '$1').replace(g, '$1;')),
+      (S = (L ? S.replace(v, '') : S).replace(y, '$1').replace(g, '$1;')),
         (S =
           'function(' +
           (T || 'obj') +
@@ -1081,13 +1081,13 @@
       h = r(71),
       d = r(26),
       m = 'Invalid `variable` option passed into `_.template`',
-      y = /\b__p \+= '';/g,
-      v = /\b(__p \+=) '' \+/g,
+      v = /\b__p \+= '';/g,
+      y = /\b(__p \+=) '' \+/g,
       g = /(__e\(.*?\)|\b__t\)) \+\n'';/g,
       b = /[()=,{}\[\]\/\s]/,
       _ = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g,
-      M = /($^)/,
-      j = /['\n\r\u2028\u2029\\]/g,
+      j = /($^)/,
+      M = /['\n\r\u2028\u2029\\]/g,
       x = Object.prototype,
       w = x.hasOwnProperty;
     e.exports = n;
@@ -1626,10 +1626,10 @@
         feet: { factor: 3.2808, display: 'feet', decimals: 0 },
         kilometers: { factor: 0.001, display: 'kilometers', decimals: 2 },
         hectares: { factor: 1e-4, display: 'hectares', decimals: 2 },
-        meters: { factor: 1, display: 'meters', decimals: 0 },
+        meters: { factor: 1, display: 'meters', decimals: 2 },
         miles: { factor: 3.2808 / 5280, display: 'miles', decimals: 2 },
         sqfeet: { factor: 10.7639, display: 'sqfeet', decimals: 0 },
-        sqmeters: { factor: 1, display: 'sqmeters', decimals: 0 },
+        sqmeters: { factor: 1, display: 'sqmeters', decimals: 2 },
         sqmiles: { factor: 3.86102e-7, display: 'sqmiles', decimals: 2 }
       });
   },
@@ -2029,18 +2029,18 @@
   },
   function(e, t) {
     e.exports =
-      '<% if (!model.isSimpleMap) { %> <div class=group> <p class=lastpoint> <span class=heading>{{ i18n.lastPoint }} </span> {{ model.lastCoord.dms.y }} <span class=coorddivider>/</span> {{ model.lastCoord.dms.x }} </p> </div> <% } %> <% if (model.pointCount > 1) { %> <div class=group> <p><span class=heading>{{ i18n.pathDistance }}</span> {{ model.lengthDisplay }}</p> </div> <% } %> <% if (model.pointCount > 2) { %> <div class=group> <p><span class=heading>{{ i18n.area }}</span> {{ model.areaDisplay }}</p> </div> <% } %> ';
+      '<% if (!model.isSimpleMap) { %> <div class=group> <p class=lastpoint> <span class=heading>{{ i18n.lastPoint }} </span> {{ model.lastCoord.dms.y }} <span class=coorddivider>/</span> {{ model.lastCoord.dms.x }} </p> </div> <% } %> <% if (model.isSimpleMap && model.pointCount == 1) { %> <div class=js-measuringprompt> <p class=js-starthelp>{{ i18n.startCreating }}</p> </div> <% } %> <% if (model.pointCount > 1) { %> <div class=group> <span class=heading>{{ i18n.pathDistance }}</span> <span>{{ model.lengthDisplay }}</span> </div> <% } %> <% if (model.pointCount > 2) { %> <div class=group> <span class=heading>{{ i18n.area }}</span> <span>{{ model.areaDisplay }}</span> </div> <% } %> ';
   },
   function(e, t) {
     e.exports =
-      '<p>{{ i18n.pointLocation }}</p> <p>{{ model.lastCoord.dms.y }} <span class=coorddivider>/</span> {{ model.lastCoord.dms.x }}</p> <p>{{ numberFormat(model.lastCoord.dd.y, 6) }} <span class=coorddivider>/</span> {{ numberFormat(model.lastCoord.dd.x, 6) }}</p> <ul class=tasks> <li><a href=# class="js-zoomto zoomto">{{ i18n.centerOnLocation }}</a></li> <li><a href=# class="js-deletemarkup deletemarkup">{{ i18n.delete }}</a></li> </ul> ';
+      '<p>{{ model.lastCoord.dms.y }} <span class=coorddivider>/</span> {{ model.lastCoord.dms.x }}</p> <p>{{ numberFormat(model.lastCoord.dd.y, 6) }} <span class=coorddivider>/</span> {{ numberFormat(model.lastCoord.dd.x, 6) }}</p> <ul class=tasks> <li><a href=# class="js-zoomto zoomto">{{ i18n.centerOnLocation }}</a></li> <li><a href=# class="js-deletemarkup deletemarkup">{{ i18n.delete }}</a></li> </ul> ';
   },
   function(e, t) {
     e.exports =
-      '<p>{{ i18n.linearMeasurement }}</p> <p>{{ model.lengthDisplay }}</p> <ul class=tasks> <li><a href=# class="js-zoomto zoomto">{{ i18n.centerOnLine }}</a></li> <li><a href=# class="js-deletemarkup deletemarkup">{{ i18n.delete }}</a></li> </ul> ';
+      '<div class=leaflet-control-measure> <div class=results> <div class=group> <span class=heading>{{ i18n.pathDistance }}</span> <span>{{ model.lengthDisplay }}</span> </div> </div> </div> <ul class=tasks> <li><a href=# class="js-zoomto zoomto">{{ i18n.centerOnLine }}</a></li> <li><a href=# class="js-deletemarkup deletemarkup">{{ i18n.delete }}</a></li> </ul> ';
   },
   function(e, t) {
     e.exports =
-      '<p>{{ i18n.areaMeasurement }}</p> <p>{{ model.areaDisplay }}</p> <p>{{ model.lengthDisplay }} {{ i18n.perimeter }}</p> <ul class=tasks> <li><a href=# class="js-zoomto zoomto">{{ i18n.centerOnArea }}</a></li> <li><a href=# class="js-deletemarkup deletemarkup">{{ i18n.delete }}</a></li> </ul> ';
+      '<div class=leaflet-control-measure> <div class=results> <div class=group> <span class=heading>{{ i18n.pathDistance }}</span> <span>{{ model.lengthDisplay }}</span> </div> <div class=group> <span class=heading>{{ i18n.area }}</span> <span>{{ model.areaDisplay }}</span> </div> </div> </div> <ul class=tasks> <li><a href=# class="js-zoomto zoomto">{{ i18n.centerOnArea }}</a></li> <li><a href=# class="js-deletemarkup deletemarkup">{{ i18n.delete }}</a></li> </ul> ';
   }
 ]);
