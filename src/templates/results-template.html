@@ -15,14 +15,17 @@
 <% } %>
 
 <% if (model.pointCount > 1) { %>
-<div class="group">
-  <span class="heading">{{ i18n.pathDistance }}</span>
-  <span>{{ model.lengthDisplay }}</span>
-</div>
-<% } %>
-<% if (model.pointCount > 2) { %>
-<div class="group">
-  <span class="heading">{{ i18n.area }}</span>
-  <span>{{ model.areaDisplay }}</span>
-</div>
+  <div class="group">
+
+    <div class="heading">{{ i18n.pathDistance }}</div>
+    <div class="value">{{ model.lengthDisplayVal }}</div>
+    <div>{{ model.lengthDisplayUnit }}</div>
+
+    <% if (model.pointCount > 2) { %>
+      <div class="heading">{{ i18n.area }}</div>
+      <div class="value">{{ model.areaDisplayVal }}</div>
+      <div>{{ model.areaDisplayUnit }}</div>
+    <% } %>
+
+  </div>
 <% } %>

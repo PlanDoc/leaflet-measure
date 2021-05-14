@@ -67,7 +67,8 @@ L.Control.Measure = L.Control.extend({
       sqmeters: 'Sq Meters',
       sqmiles: 'Sq Miles',
       decPoint: '.',
-      thousandsSep: ','
+      thousandsSep: ',',
+      rollback: 'Rollback'
     },
     popupOptions: {
       // standard leaflet popup options http://leafletjs.com/reference-1.3.0.html#popup-option
@@ -120,6 +121,44 @@ L.Control.Measure = L.Control.extend({
     this.$results = $('.js-results', container); // div with coordinate, linear, area results
     this.$measureTasks = $('.js-measuretasks', container); // active measure buttons container
 
+    this.$deletePoint = $('.js-deletepoint', container);
+    if (this.$deletePoint) {
+      L.DomEvent.on(this.$deletePoint, 'click', L.DomEvent.stop);
+      L.DomEvent.on(
+        this.$deletePoint,
+        'click',
+        function() {
+          if (this._lastVertex) {
+            this._measureVertexes.removeLayer(this._lastVertex);
+            const vertices = this._measureVertexes.getLayers();
+            if (vertices && vertices.length > 0) {
+              this._lastVertex = vertices[vertices.length - 1];
+            }
+          }
+          if (this._measureArea) {
+            this._layer.removeLayer(this._measureArea);
+            this._measureArea = null;
+          }
+          if (this._measureBoundary) {
+            this._layer.removeLayer(this._measureBoundary);
+            this._measureBoundary = null;
+          }
+
+          if (this._measureBoundary) {
+            this._measureBoundary.bringToFront();
+          }
+          this._measureVertexes.bringToFront();
+
+          this._latlngs.splice(-1, 1);
+          this._addMeasureArea(this._latlngs);
+          this._addMeasureBoundary(this._latlngs);
+          this._updateResults();
+          this._updateMeasureStartedWithPoints();
+        },
+        this
+      );
+    }
+
     this._collapse();
     this._updateMeasureNotStarted();
 
@@ -158,6 +197,7 @@ L.Control.Measure = L.Control.extend({
     dom.hide(this.$results);
     dom.hide(this.$measureTasks);
     dom.hide(this.$measuringPrompt);
+    dom.hide(this.$deletePoint);
     dom.show(this.$startPrompt);
   },
   _updateMeasureStartedNoPoints: function() {
@@ -165,6 +205,7 @@ L.Control.Measure = L.Control.extend({
     dom.show(this.$startHelp);
     dom.show(this.$measureTasks);
     dom.hide(this.$startPrompt);
+    dom.hide(this.$deletePoint);
     dom.show(this.$measuringPrompt);
   },
   _updateMeasureStartedWithPoints: function() {
@@ -172,6 +213,11 @@ L.Control.Measure = L.Control.extend({
     dom.show(this.$results);
     dom.show(this.$measureTasks);
     dom.hide(this.$startPrompt);
+    if (this._latlngs && this._latlngs.length > 1) {
+      dom.show(this.$deletePoint);
+    } else {
+      dom.hide(this.$deletePoint);
+    }
     dom.show(this.$measuringPrompt);
   },
   // get state vars and interface ready for measure
@@ -187,7 +233,7 @@ L.Control.Measure = L.Control.extend({
 
     this._captureMarker
       .on('mouseout', this._handleMapMouseOut, this)
-      .on('dblclick', this._handleMeasureDoubleClick, this)
+      // .on('dblclick', this._handleMeasureDoubleClick, this)
       .on('click', this._handleMeasureClick, this);
 
     this._map
@@ -209,12 +255,13 @@ L.Control.Measure = L.Control.extend({
     this._locked = false;
 
     L.DomEvent.off(this._container, 'mouseover', this._handleMapMouseOut, this);
+    // L.DomEvent.off(this.$deletePoint, 'click');
 
     this._clearMeasure();
 
     this._captureMarker
       .off('mouseout', this._handleMapMouseOut, this)
-      .off('dblclick', this._handleMeasureDoubleClick, this)
+      // .off('dblclick', this._handleMeasureDoubleClick, this)
       .off('click', this._handleMeasureClick, this);
 
     this._map
@@ -275,13 +322,33 @@ L.Control.Measure = L.Control.extend({
         this.options.decPoint,
         this.options.thousandsSep
       ),
+      lengthDisplayVal: formatMeasureVal(
+        measurement.length,
+        this.options.primaryLengthUnit,
+        this.options.decPoint,
+        this.options.thousandsSep
+      ),
+      lengthDisplayUnit:
+        this.options.primaryLengthUnit && unitDefinitions[this.options.primaryLengthUnit]
+          ? formatMeasureLabel(unitDefinitions[this.options.primaryLengthUnit])
+          : null,
       areaDisplay: buildDisplay(
         measurement.area,
         this.options.primaryAreaUnit,
         this.options.secondaryAreaUnit,
         this.options.decPoint,
         this.options.thousandsSep
-      )
+      ),
+      areaDisplayVal: formatMeasureVal(
+        measurement.area,
+        this.options.primaryAreaUnit,
+        this.options.decPoint,
+        this.options.thousandsSep
+      ),
+      areaDisplayUnit:
+        this.options.primaryAreaUnit && unitDefinitions[this.options.primaryAreaUnit]
+          ? formatMeasureLabel(unitDefinitions[this.options.primaryAreaUnit])
+          : null
     };
 
     function buildDisplay(val, primaryUnit, secondaryUnit, decPoint, thousandsSep) {
@@ -301,7 +368,17 @@ L.Control.Measure = L.Control.extend({
       return formatMeasure(val, null, decPoint, thousandsSep);
     }
 
-    function formatMeasure(val, unit, decPoint, thousandsSep) {
+    function formatMeasureVal(val, unit, decPoint, thousandsSep, decimals = 2, factor = 1) {
+      const u = L.extend({ factor, decimals }, unit);
+      return numberFormat(
+        val * u.factor,
+        u.decimals,
+        decPoint || i18n.decPoint,
+        thousandsSep || i18n.thousandsSep
+      );
+    }
+
+    function formatMeasureLabel(unit, decimals = 0, factor = 1) {
       const unitDisplays = {
         acres: i18n.acres,
         feet: i18n.feet,
@@ -313,16 +390,17 @@ L.Control.Measure = L.Control.extend({
         sqmeters: i18n.sqmeters,
         sqmiles: i18n.sqmiles
       };
+      const u = L.extend({ factor: factor, decimals: decimals }, unit);
+      return unitDisplays[u.display] || u.display;
+    }
 
-      const u = L.extend({ factor: 1, decimals: 0 }, unit);
-      const formattedNumber = numberFormat(
-        val * u.factor,
-        u.decimals,
-        decPoint || i18n.decPoint,
-        thousandsSep || i18n.thousandsSep
-      );
-      const label = unitDisplays[u.display] || u.display;
-      return [formattedNumber, label].join(' ');
+    function formatMeasure(val, unit, decPoint, thousandsSep) {
+      const decimals = 0;
+      const factor = 1;
+      return [
+        formatMeasureVal(val, unit, decPoint, thousandsSep, decimals, factor),
+        formatMeasureLabel(unit, decimals, factor)
+      ].join(' ');
     }
   },
   // update results area of dom with calced measure from `this._latlngs`
@@ -478,7 +556,7 @@ L.Control.Measure = L.Control.extend({
   },
   // add various measure graphics to map - vertex, area, boundary
   _addNewVertex: function(latlng) {
-    L.circleMarker(latlng, this._symbols.getSymbol('measureVertexActive')).addTo(
+    this._lastVertex = L.circleMarker(latlng, this._symbols.getSymbol('measureVertexActive')).addTo(
       this._measureVertexes
     );
   },

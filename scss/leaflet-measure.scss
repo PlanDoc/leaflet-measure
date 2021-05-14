@@ -7,7 +7,7 @@ $color-lightertext: #999;
 $spacing-external: 12px;
 $spacing-internal: 4px;
 
-$max-width: 280px;
+$max-width: 300px;
 
 $button-icon-size: 12px;
 $button-icon-spacing: 4px;
@@ -67,6 +67,7 @@ $button-icon-spacing: 4px;
     //padding: $spacing-internal 0 0 0;
     //border-top: solid 1px $color-divider;
     text-align: right;
+    padding: 0;
 
     list-style: none;
     list-style-image: none;
@@ -122,9 +123,9 @@ $button-icon-spacing: 4px;
     }
     .tasks {
       margin-top: 0;
-      padding-top: 0;
       border-top: 0;
       text-align: left;
+      padding: 0;
     }
   }
 
@@ -135,7 +136,7 @@ $button-icon-spacing: 4px;
   .results {
     .group {
       display: grid;
-      grid-template-columns: auto auto;
+      grid-template-columns: auto auto auto;
       margin-top: $spacing-internal;
       padding-top: $spacing-internal;
       //border-top: dotted 1px lighten($color-divider, 5);
@@ -149,6 +150,10 @@ $button-icon-spacing: 4px;
       margin-right: $spacing-internal * 0.5;
       color: $color-lightertext;
     }
+    .value {
+      text-align: right;
+      font-family: monospace;
+    }
   }
 
   a.start {
@@ -156,6 +161,9 @@ $button-icon-spacing: 4px;
   }
   a.cancel {
     @include button(cancel);
+  }
+  a.deletemarkup {
+    @include button(trash);
   }
   a.finish {
     @include button(check);
