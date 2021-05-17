@@ -164,6 +164,7 @@ L.Control.Measure = L.Control.extend({
 
     if (!L.Browser.android) {
       L.DomEvent.on(container, 'click', this._expand, this);
+      L.DomEvent.off(container, 'click', this._expand, this);
       // L.DomEvent.on(container, 'mouseleave', this._collapse, this);
     }
     L.DomEvent.on($toggle, 'click', L.DomEvent.stop);

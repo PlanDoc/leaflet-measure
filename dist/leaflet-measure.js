@@ -758,7 +758,9 @@
             )),
           this._collapse(),
           this._updateMeasureNotStarted(),
-          L.Browser.android || L.DomEvent.on(t, 'click', this._expand, this),
+          L.Browser.android ||
+            (L.DomEvent.on(t, 'click', this._expand, this),
+            L.DomEvent.off(t, 'click', this._expand, this)),
           L.DomEvent.on(r, 'click', L.DomEvent.stop),
           L.Browser.touch
             ? L.DomEvent.on(r, 'click', this._expand, this)
