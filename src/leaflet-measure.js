@@ -228,7 +228,8 @@ L.Control.Measure = L.Control.extend({
     this._captureMarker = L.marker(this._map.getCenter(), {
       clickable: true,
       zIndexOffset: this.options.captureZIndex,
-      opacity: 0
+      opacity: 0,
+      autoPanOnFocus: false
     }).addTo(this._layer);
     this._setCaptureMarkerIcon();
 
@@ -422,9 +423,9 @@ L.Control.Measure = L.Control.extend({
   // adds floating measure marker under cursor
   _handleMeasureMove: function(evt) {
     if (!this._measureDrag) {
-      this._measureDrag = L.circleMarker(evt.latlng, this._symbols.getSymbol('measureDrag')).addTo(
-        this._layer
-      );
+      this._measureDrag = L.circleMarker(evt.latlng, this._symbols.getSymbol('measureDrag'), {
+        autoPanOnFocus: false,
+      }).addTo(this._layer);
     } else {
       this._measureDrag.setLatLng(evt.latlng);
     }
