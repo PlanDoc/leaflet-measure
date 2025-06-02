@@ -1,5 +1,3 @@
-import '../scss/leaflet-measure.scss';
-
 import template from 'lodash/template';
 
 import units from './units';

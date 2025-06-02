@@ -16,23 +16,6 @@ const htmlLoader = {
   use: { loader: 'html-loader?interpolate' }
 };
 
-const scssLoader = {
-  test: /\.scss$/,
-  use: extractSass.extract({
-    use: [
-      {
-        loader: 'css-loader',
-        options: { sourceMap: true, url: false }
-      },
-      {
-        loader: 'sass-loader',
-        options: { sourceMap: true }
-      }
-    ],
-    fallback: 'style-loader'
-  })
-};
-
 const devLanguage = require('./languages/en.json');
 
 module.exports = {
@@ -45,7 +28,7 @@ module.exports = {
     contentBase: BUILD_DIR
   },
   module: {
-    rules: [htmlLoader, scssLoader]
+    rules: [htmlLoader]
   },
   plugins: [copySite, copyAssets, extractSass, new I18nPlugin(devLanguage)],
   devtool: 'eval-source-map'

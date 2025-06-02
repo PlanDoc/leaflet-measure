@@ -26,14 +26,6 @@ const htmlLoader = {
   use: { loader: 'html-loader?interpolate' }
 };
 
-const scssLoader = {
-  test: /\.scss$/,
-  use: extractSass.extract({
-    use: [{ loader: 'css-loader', options: { url: false } }, { loader: 'sass-loader' }],
-    fallback: 'style-loader'
-  })
-};
-
 // Build for all languages in the in `./languages` using I18nPlugin
 const languages = glob.sync('./languages/*.json').reduce(
   (dict, filePath) => {
@@ -56,7 +48,7 @@ module.exports = Object.keys(languages).map(language => {
       publicPath: '/dist/'
     },
     module: {
-      rules: [jsLoader, htmlLoader, scssLoader]
+      rules: [jsLoader, htmlLoader]
     },
     plugins: [copySite, copyAssets, extractSass, new I18nPlugin(languages[language])]
   };
